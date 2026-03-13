@@ -35,6 +35,47 @@ Close the Server:
 Optionally, include a mechanism to gracefully close the server when needed.
 <BR>
 ## PROGRAM
+## server.py
+~~~
+import socket
+dns_table = {
+    "google.com": "142.250.190.78",
+    "yahoo.com": "98.137.11.163",
+    "openai.com": "104.18.12.123",
+    "example.com": "93.184.216.34"
+}
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+server_socket.bind(("127.0.0.1", 15353))
+
+print("DNS Server running on port 15353...\n")
+
+while True:
+    
+    message, client_address = server_socket.recvfrom(1024)
+    domain = message.decode()
+    print("Request received for:", domain)
+    
+    ip = dns_table.get(domain, "Domain not found")
+   
+    server_socket.sendto(ip.encode(), client_address)
+~~~
+## client.py
+~~~
+import socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server_address = ("127.0.0.1", 15353)
+domain = input("Enter domain name: ")
+client_socket.sendto(domain.encode(), server_address)
+ip_address, server = client_socket.recvfrom(1024)
+
+print("IP Address:", ip_address.decode())
+
+client_socket.close()
+~~~
 ## OUPUT
+<img width="896" height="247" alt="Screenshot 2026-03-13 112600" src="https://github.com/user-attachments/assets/25af90c7-810b-4d16-a05d-6be019277a9c" />
+
 ## RESULT
 Thus the Experiment implemented sucessfully
